@@ -14,28 +14,21 @@ def helpMenu():
 
 def receiveThread(connection):
     while(True):
-        replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
-        replyObj = json.loads(replyString)
+        try:
+            replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
+            replyObj = json.loads(replyString)
 
-        print(replyObj["sender"] + "".join(replyObj["message"]))
+            print(replyObj["sender"] + "".join(replyObj["message"]))
+        except:
+            pass
 
 def connectToServer(clientSocket, serverIP, serverPort):
     try:
         msgToSend = str.encode("Requesting connection...")
 
         clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
-        messageBytes, address = clientSocket.recvfrom(BUFFER_SIZE)
 
-        messageString = messageBytes.decode()
-        receivedIP = address[0]
-        receivedPort = address[1]
-
-        messageObj = json.loads(messageString)
-        print(messageObj['sender'] + messageObj["message"])
-        
-        threading.Thread(target=receiveThread, args=(clientSocket,)).start()
-
-        return receivedIP, receivedPort
+        return serverIP, serverPort
 
     except socket.gaierror:
         print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
@@ -52,6 +45,7 @@ def main():
     serverIP = None
     serverPort = None
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    threading.Thread(target=receiveThread, args=(clientSocket,)).start()
 
     while(True):
         inputString = input("Enter command: ")
@@ -83,6 +77,9 @@ def main():
             messageBytes = messageString.encode()
 
             clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
+
+            if(inputList[0] == "/leave"):
+                serverIP, serverPort = None, None
 main()
 
 

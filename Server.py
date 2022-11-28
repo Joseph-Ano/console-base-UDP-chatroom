@@ -70,6 +70,20 @@ def broadcast(serverSocket, handleDict, setOfConnections, messageObj, senderAddr
 
     return broadcastMessage
 
+def disconnect(setOfConnections, handleDict, senderAddress, messageObj):
+    if(messageObj["parameters"]):
+        reply = toJsonString("ERROR: ", ERROR_PARAMETERS).encode()
+    else:
+        if(senderAddress in handleDict):
+            senderHandle = handleDict[senderAddress]
+            handleDict.pop(senderAddress)
+            handleDict.pop(senderHandle)
+            
+        setOfConnections.remove(senderAddress)
+        reply = toJsonString("SERVER: ", "Connection closed. Thank you!").encode()
+    
+    return reply
+
 def main():
     serverIP = socket.gethostname()
     serverPort = 12345
@@ -104,7 +118,7 @@ def main():
                 serverReply = toJsonString("SERVER: ", "You are already connected").encode()
 
             elif(messageObj["command"] == "/leave"):
-                print("TO DO")
+                serverReply = disconnect(setOfConnections, handleDict, senderAddress, messageObj)
 
             elif(messageObj["command"] == "/register"):
                 serverReply = registerHandle(handleDict, senderAddress, messageObj)
