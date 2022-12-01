@@ -10,7 +10,8 @@ def helpMenu():
     print("Register a unique handle or alias: /register <handle>")
     print("Send message to all: /all <message>")
     print("Send direct message to a single handle: /msg <handle> <message>")
-    print("Request command help to output all InputcSyntax commands for references: /?")
+    print("Request command help to output all Input Syntax commands for references: /?")
+    print("Emoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
 
 def receiveThread(connection):
     while(True):

@@ -11,6 +11,18 @@ def toJsonString(sender, message):
     }
     return json.dumps(jsonObj)
 
+def emojify(message):
+    emojies = {
+        ":happy:": "😊",
+        ":sad:": "😢",
+        ":laugh:":"😂",
+        ":angry:": "😡"
+    }
+
+    emojiMsg = ' '.join(str(emojies.get(word, word)) for word in message)
+
+    return emojiMsg
+
 def registerHandle(handleDict, senderAddress, messageObj):
     if(not messageObj["parameters"]):
         reply = toJsonString("ERROR: ", ERROR_PARAMETERS).encode()
@@ -19,7 +31,7 @@ def registerHandle(handleDict, senderAddress, messageObj):
     else:
         senderHandle = messageObj["parameters"][0]
         if(senderHandle not in handleDict):
-            if(senderAddress in handleDict):
+            if(senderAddress in handleDict): #change this if not allowed to change handle once set
                  handleDict.pop(handleDict[senderAddress])
     
             handleDict[senderAddress] = senderHandle
@@ -41,8 +53,8 @@ def unicast(serverSocket, handleDict, messageObj, senderAddress):
 
         elif(recieverHandle in handleDict):
             receiverAddress = handleDict[recieverHandle]
-            message = " ".join(messageObj["parameters"][1:])
-
+            message = emojify(messageObj["parameters"][1:])
+        
             receiverMsg = toJsonString("[FROM " + handleDict[senderAddress] + "] ", message).encode()
             senderReply = toJsonString("[TO " + recieverHandle + "] ", message).encode()
 
@@ -50,6 +62,8 @@ def unicast(serverSocket, handleDict, messageObj, senderAddress):
 
         else:
             senderReply = toJsonString("ERROR: ", "Handle or alias not found.").encode()
+    
+    print(message)
 
     return senderReply
 
@@ -61,11 +75,11 @@ def broadcast(serverSocket, handleDict, setOfConnections, messageObj, senderAddr
         broadcastMessage = toJsonString("ERROR: ", "Register first before sending messages.").encode()
     
     else:
-        message = " ".join(messageObj["parameters"])
+        message = emojify(messageObj["parameters"])
         broadcastMessage = toJsonString(handleDict[senderAddress] + ": ", message).encode()
 
         for address in setOfConnections:
-            if(address in handleDict and address != senderAddress):
+            if(address in handleDict and address != senderAddress): #change this if broadcast works for connected but not registered
                 serverSocket.sendto(broadcastMessage, address)
 
     return broadcastMessage
