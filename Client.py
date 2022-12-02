@@ -4,6 +4,69 @@ import threading
 
 BUFFER_SIZE = 1024
 
+def toJsonString(inputList, parameters):
+    if(inputList[0] == "/join"):
+        msgDict = {
+            "command": inputList[0],
+        }
+        
+    elif(inputList[0] == "/leave"):
+        if(parameters == 1):
+            msgDict = {
+                "command": inputList[0]
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "wrong parameters"
+            }
+
+
+    elif(inputList[0] == "/register"):
+        if(parameters == 2):
+            msgDict = {
+                "command": inputList[0],
+                "handle": inputList[1]
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "handle must not contain spaces"
+            }
+
+    elif(inputList[0] == "/msg"):
+        if(parameters >= 3):
+            msgDict = {
+                "command": inputList[0],
+                "handle": inputList[1],
+                "message": inputList[2:]
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "wrong parameters"
+            }
+
+    elif(inputList[0] == "/all"):
+        if(parameters >=2):
+            msgDict = {
+                "command": inputList[0],
+                "message": inputList[1:]
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "wrong parameters"
+            }
+
+    else:
+        msgDict = {
+            "command": inputList[0],
+            "parameters": inputList[1:] if parameters > 1 else []
+        }
+
+    return json.dumps(msgDict)
+
 def helpMenu():
     print("Connect to the server application: /join <server_ip_add> <port>")
     print("Disconnect to the server application: /leave")
@@ -18,8 +81,25 @@ def receiveThread(connection):
         try:
             replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
             replyObj = json.loads(replyString)
+            
+            if(replyObj["command"] == "join"):
+                 print("Successfully connected to server")
 
-            print(replyObj["sender"] + "".join(replyObj["message"]))
+            elif(replyObj["command"] == "register"):
+                print("User handle successfuly set to " + replyObj["handle"])
+
+            elif(replyObj["command"] == "msg"):
+                print(replyObj["message"])
+
+            elif(replyObj["command"] == "all"):
+                print(replyObj["message"])
+
+            elif(replyObj["command"] == "leave"):
+                print("Successfully disconected from server")
+
+            elif(replyObj["command"] == "error"):
+                print(replyObj["command"] + ": " + replyObj["message"])
+
         except:
             pass
 
@@ -35,13 +115,6 @@ def connectToServer(clientSocket, serverIP, serverPort):
         print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
         return None, None
 
-def toJsonString(inputList):
-    jsonObj = {
-        "command": inputList[0],
-        "parameters": inputList[1:] if len(inputList) > 1 else []
-    }
-    return json.dumps(jsonObj)
-
 def main():
     serverIP = None
     serverPort = None
@@ -53,8 +126,12 @@ def main():
         inputList = inputString.split(" ")
         parameters = len(inputList)
         
+        if(inputList[0] == "!Stop"):
+            print("Stopping client")
+            exit()
+
         #help menu
-        if(inputList[0] == "/?"):
+        elif(inputList[0] == "/?"):
             if(parameters == 1):
                 helpMenu()
             else:
@@ -74,7 +151,7 @@ def main():
 
         #connected to server
         elif(serverIP is not None and serverPort is not None):
-            messageString = toJsonString(inputList)
+            messageString = toJsonString(inputList, parameters)
             messageBytes = messageString.encode()
 
             clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
