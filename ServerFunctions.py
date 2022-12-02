@@ -13,7 +13,7 @@ def emojify(message):
 def registerHandle(handleDict, senderAddress, userHandle):
     if(userHandle not in handleDict):
         if(senderAddress in handleDict): #change this if not allowed to change handle once set
-                handleDict.pop(handleDict[senderAddress])
+            handleDict.pop(handleDict[senderAddress])
 
         handleDict[senderAddress] = userHandle
         handleDict[userHandle] = senderAddress
@@ -46,7 +46,7 @@ def unicast(serverSocket, handleDict, senderAddress, recieverHandle, message):
 
     return senderReply
 
-def broadcast(serverSocket, handleDict, setOfConnections, message, senderAddress):
+def broadcast(serverSocket, handleDict, setOfConnections, senderAddress, message):
     if(senderAddress not in handleDict):
         broadcastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
     

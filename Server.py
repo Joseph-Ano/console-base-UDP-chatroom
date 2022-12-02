@@ -46,13 +46,13 @@ def main():
                 serverReply = unicast(serverSocket, handleDict, senderAddress, messageObj["handle"], messageObj["message"])
             
             elif(messageObj["command"] == "/all"):
-                serverReply = broadcast(serverSocket, handleDict, setOfConnections, messageObj["message"], senderAddress)
+                serverReply = broadcast(serverSocket, handleDict, setOfConnections, senderAddress, messageObj["message"])
             
             elif(messageObj["command"] == "error"):
                 serverReply = toJsonString(["error", messageObj["message"]]).encode()
 
             else:
-                serverReply = toJsonString(["error", "Syntax not recognized"]).encode()
+                serverReply = toJsonString(["error", "Command not recognized"]).encode()
 
         serverSocket.sendto(serverReply, senderAddress)
 

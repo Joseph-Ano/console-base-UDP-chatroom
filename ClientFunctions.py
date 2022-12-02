@@ -19,7 +19,7 @@ def receiveThread(connection):
             replyObj = json.loads(replyString)
 
             if(replyObj["command"] == "join"):
-                 print("Successfully connected to server")
+                 print("Connection to the Message Board Server is successful!")
 
             elif(replyObj["command"] == "register"):
                 print("User handle successfuly set to " + replyObj["handle"])
@@ -31,7 +31,7 @@ def receiveThread(connection):
                 print(replyObj["message"])
 
             elif(replyObj["command"] == "leave"):
-                print("Successfully disconected from server")
+                print("Connection closed. Thank you!")
 
             elif(replyObj["command"] == "error"):
                 print(replyObj["command"] + ": " + replyObj["message"])

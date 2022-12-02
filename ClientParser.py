@@ -14,7 +14,7 @@ def toJsonString(inputList, parameters):
         else:
             msgDict = {
                 "command": "error",
-                "message": "wrong parameters"
+                "message": "Error: Command parameters do not match or is not allowed."
             }
 
 
@@ -27,7 +27,7 @@ def toJsonString(inputList, parameters):
         else:
             msgDict = {
                 "command": "error",
-                "message": "handle must not contain spaces"
+                "message": "Error: handle must not contain spaces"
             }
 
     elif(inputList[0] == "/msg"):
@@ -40,7 +40,7 @@ def toJsonString(inputList, parameters):
         else:
             msgDict = {
                 "command": "error",
-                "message": "wrong parameters"
+                "message": "Error: Command parameters do not match or is not allowed."
             }
 
     elif(inputList[0] == "/all"):
@@ -52,13 +52,12 @@ def toJsonString(inputList, parameters):
         else:
             msgDict = {
                 "command": "error",
-                "message": "wrong parameters"
+                "message": "Error: Command parameters do not match or is not allowed."
             }
 
     else:
         msgDict = {
             "command": inputList[0],
-            "parameters": inputList[1:] if parameters > 1 else []
         }
 
     return json.dumps(msgDict)
