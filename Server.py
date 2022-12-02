@@ -2,7 +2,6 @@ import socket
 from ServerFunctions import *
 
 BUFFER_SIZE = 1024
-ERROR_PARAMETERS = "Command parameters do not match or is not allowed."
 
 def main():
     serverIP = socket.gethostname()
