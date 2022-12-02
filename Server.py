@@ -29,28 +29,32 @@ def main():
             setOfConnections.add(senderAddress)
             print("Connection Established with IP address: " + senderIP + " and port: " + str(senderPort))
 
-            serverReply = toJsonString("SERVER: ", "Connection estblished with server").encode()
+            serverReply = toJsonString(["join"]).encode()
         
         else:
             messageObj = json.loads(messageString) 
+            print(messageObj["command"])
 
             if(messageObj["command"] == "/join"):
-                serverReply = toJsonString("SERVER: ", "You are already connected").encode()
+                serverReply = toJsonString(["error",  "Already connected to a server"]).encode()
 
             elif(messageObj["command"] == "/leave"):
-                serverReply = disconnect(setOfConnections, handleDict, senderAddress, messageObj)
+                serverReply = disconnect(setOfConnections, handleDict, senderAddress)
 
             elif(messageObj["command"] == "/register"):
-                serverReply = registerHandle(handleDict, senderAddress, messageObj)
+                serverReply = registerHandle(handleDict, senderAddress, messageObj["handle"])
             
             elif(messageObj["command"] == "/msg"):
-                serverReply = unicast(serverSocket, handleDict, messageObj, senderAddress)
+                serverReply = unicast(serverSocket, handleDict, senderAddress, messageObj["handle"], messageObj["message"])
             
             elif(messageObj["command"] == "/all"):
-                serverReply = broadcast(serverSocket, handleDict, setOfConnections, messageObj, senderAddress)
+                serverReply = broadcast(serverSocket, handleDict, setOfConnections, messageObj["message"], senderAddress)
+            
+            elif(messageObj["command"] == "error"):
+                serverReply = toJsonString(["error", messageObj["message"]]).encode()
 
             else:
-                serverReply = toJsonString("ERROR: ", "Syntax not recognized").encode()
+                serverReply = toJsonString(["error", "Syntax not recognized"]).encode()
 
         serverSocket.sendto(serverReply, senderAddress)
 
