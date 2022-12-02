@@ -1,9 +1,11 @@
 import socket
-import json #use json.loads function to convert input to json
 import threading
+from ClientParser import *
+from ClientFunctions import *
 
 BUFFER_SIZE = 1024
 
+<<<<<<< Updated upstream
 def helpMenu():
     print("Connect to the server application: /join <server_ip_add> <port>")
     print("Disconnect to the server application: /leave")
@@ -42,6 +44,8 @@ def toJsonString(inputList):
     }
     return json.dumps(jsonObj)
 
+=======
+>>>>>>> Stashed changes
 def main():
     serverIP = None
     serverPort = None

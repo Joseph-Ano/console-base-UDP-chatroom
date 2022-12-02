@@ -1,9 +1,10 @@
 import socket
-import json #use json.loads function to convert input to json
+from ServerFunctions import *
 
 BUFFER_SIZE = 1024
 ERROR_PARAMETERS = "Command parameters do not match or is not allowed."
 
+<<<<<<< Updated upstream
 def toJsonString(sender, message):
     jsonObj = {
         "sender": sender,
@@ -98,6 +99,8 @@ def disconnect(setOfConnections, handleDict, senderAddress, messageObj):
     
     return reply
 
+=======
+>>>>>>> Stashed changes
 def main():
     serverIP = socket.gethostname()
     serverPort = 12345
