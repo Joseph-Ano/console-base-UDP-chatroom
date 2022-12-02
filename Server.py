@@ -32,7 +32,6 @@ def main():
         
         else:
             messageObj = json.loads(messageString) 
-            print(messageObj["command"])
 
             if(messageObj["command"] == "/join"):
                 serverReply = toJsonString(["error",  "Already connected to a server"]).encode()
