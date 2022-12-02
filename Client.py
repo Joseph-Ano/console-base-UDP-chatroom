@@ -5,47 +5,6 @@ from ClientFunctions import *
 
 BUFFER_SIZE = 1024
 
-<<<<<<< Updated upstream
-def helpMenu():
-    print("Connect to the server application: /join <server_ip_add> <port>")
-    print("Disconnect to the server application: /leave")
-    print("Register a unique handle or alias: /register <handle>")
-    print("Send message to all: /all <message>")
-    print("Send direct message to a single handle: /msg <handle> <message>")
-    print("Request command help to output all Input Syntax commands for references: /?")
-    print("Emoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
-
-def receiveThread(connection):
-    while(True):
-        try:
-            replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
-            replyObj = json.loads(replyString)
-
-            print(replyObj["sender"] + "".join(replyObj["message"]))
-        except:
-            pass
-
-def connectToServer(clientSocket, serverIP, serverPort):
-    try:
-        msgToSend = str.encode("Requesting connection...")
-
-        clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
-
-        return serverIP, serverPort
-
-    except socket.gaierror:
-        print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
-        return None, None
-
-def toJsonString(inputList):
-    jsonObj = {
-        "command": inputList[0],
-        "parameters": inputList[1:] if len(inputList) > 1 else []
-    }
-    return json.dumps(jsonObj)
-
-=======
->>>>>>> Stashed changes
 def main():
     serverIP = None
     serverPort = None
