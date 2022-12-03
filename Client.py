@@ -37,7 +37,7 @@ def main():
 
         #connected to server
         elif(serverIP is not None and serverPort is not None):
-            messageString = toJsonString(inputList)
+            messageString = toJsonString(inputList, parameters)
             messageBytes = messageString.encode()
 
             clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
