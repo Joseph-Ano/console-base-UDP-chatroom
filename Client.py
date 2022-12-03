@@ -13,7 +13,7 @@ def main():
 
     while(True):
         inputString = input("Enter command: ")
-        inputList = inputString.split(" ")
+        inputList = inputString.strip().split(" ")
         parameters = len(inputList)
         
         #help menu

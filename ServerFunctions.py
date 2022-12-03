@@ -9,7 +9,6 @@ def emojify(message):
     }
     return ' '.join(str(emojies.get(word, word)) for word in message)
 
-
 def registerHandle(handleDict, senderAddress, userHandle):
     if(userHandle not in handleDict):
         if(senderAddress in handleDict): #change this if not allowed to change handle once set

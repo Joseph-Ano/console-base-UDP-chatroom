@@ -57,7 +57,7 @@ def toJsonString(inputList, parameters):
 
     else:
         msgDict = {
-            "command": inputList[0],
+            "command": inputList[0]
         }
 
     return json.dumps(msgDict)
