@@ -103,7 +103,8 @@ def receiveThread(connection):
         except:
             pass
 
-def connectToServer(clientSocket, serverIP, serverPort):
+def connectToServer(clientSocket, serverIP, serverPort = 0 ):
+    print("hello")
     try:
         msgToSend = str.encode("Requesting connection...")
 
@@ -123,7 +124,7 @@ def main():
 
     while(True):
         inputString = input("Enter command: ")
-        inputList = inputString.split(" ")
+        inputList = inputString.strip().split(" ")
         parameters = len(inputList)
         
         if(inputList[0] == "!Stop"):
