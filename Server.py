@@ -52,8 +52,8 @@ def main():
             elif(messageObj["command"] == "/createGC"):
                 serverReply = createGC(senderAddress, handleDict, groupChats, messageObj["groupName"])
 
-            elif(messageObj["command"] == "/inviteGC"):
-                serverReply = inviteGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
+            elif(messageObj["command"] == "/addGC"):
+                serverReply = addGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
 
             elif(messageObj["command"] == "/leaveGC"):
                 serverReply = leaveGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"])

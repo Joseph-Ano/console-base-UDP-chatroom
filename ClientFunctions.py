@@ -10,7 +10,12 @@ def helpMenu():
     print("Send message to all: /all <message>")
     print("Send direct message to a single handle: /msg <handle> <message>")
     print("Request command help to output all Input Syntax commands for references: /?")
-    print("Emoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
+    print("\n\nAdditonal Features:")
+    print("Creating a group chat: /createGC <group chat name>")
+    print("Adding users to group chat: /addGC <group chat name> <user handle to add>")
+    print("Leaving a group chat: /leaveGC <group chat name>")
+    print("Messaging a group chat: /msgGC <group chat name> <message>")
+    print("\n\nEmoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
 
 def receiveThread(connection):
     while(True):
@@ -33,7 +38,7 @@ def receiveThread(connection):
             elif(replyObj["command"] == "createGC"):
                 print("Group chat: " + replyObj["groupName"] + " successfully created")
 
-            elif(replyObj["command"] == "inviteGC"):
+            elif(replyObj["command"] == "addGC"):
                 print("[" + replyObj["groupName"] + "] " + replyObj["inviteHandle"]  + " has been added to the group.")
 
             elif(replyObj["command"] == "leaveGC"):

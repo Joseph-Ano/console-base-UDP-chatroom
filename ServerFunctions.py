@@ -84,7 +84,7 @@ def createGC(senderAddress, handleDict, groupChats, groupName):
             
     return reply 
 
-def inviteGC(serverSocket, handleDict, groupChats, senderAddress, groupName, inviteHandle):
+def addGC(serverSocket, handleDict, groupChats, senderAddress, groupName, inviteHandle):
     if(senderAddress not in handleDict):
         reply =  toJsonString(["error", "Register before inviting"]).encode()
 
@@ -102,7 +102,7 @@ def inviteGC(serverSocket, handleDict, groupChats, senderAddress, groupName, inv
 
     else:
         groupChats[groupName].add(inviteHandle)
-        reply = toJsonString(["invite", groupName, inviteHandle]).encode()
+        reply = toJsonString(["addGC", groupName, inviteHandle]).encode()
         for handle in groupChats[groupName]:
             if(handleDict[handle] != senderAddress):
                 serverSocket.sendto(reply, handleDict[handle])

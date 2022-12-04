@@ -35,7 +35,7 @@ def toJsonString(inputList):
             "command": inputList[0],
             "groupName": inputList[1]
         }
-    elif(inputList[0] == "inviteGC"):
+    elif(inputList[0] == "addGC"):
         msgDict = {
             "command": inputList[0],
             "groupName": inputList[1],
