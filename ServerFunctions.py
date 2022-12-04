@@ -9,26 +9,26 @@ def emojify(message):
     }
     return ' '.join(str(emojies.get(word, word)) for word in message)
 
-def registerHandle(handleDict, senderAddress, userHandle):
-    if(userHandle not in handleDict):
-        if(senderAddress in handleDict): #change this if not allowed to change handle once set
-            handleDict.pop(handleDict[senderAddress])
+def registerHandle(registered, senderAddress, userHandle):
+    if(userHandle not in registered):
+        if(senderAddress in registered): #change this if not allowed to change handle once set
+            registered.pop(registered[senderAddress])
 
-        handleDict[senderAddress] = userHandle
-        handleDict[userHandle] = senderAddress
+        registered[senderAddress] = userHandle
+        registered[userHandle] = senderAddress
         reply = toJsonString(["register", userHandle]).encode()
     else:
         reply =  toJsonString(["error", "Registration failed. Handle: " + userHandle + " already exists"]).encode()
             
     return reply 
 
-def unicast(serverSocket, handleDict, senderAddress, recieverHandle, message):
-    if(senderAddress not in handleDict):
+def unicast(serverSocket, registered, senderAddress, recieverHandle, message):
+    if(senderAddress not in registered):
         senderReply = toJsonString(["error", "Register first before sending messages."]).encode()
 
-    elif(recieverHandle in handleDict):
-        receiverAddress = handleDict[recieverHandle]
-        senderHandle = handleDict[senderAddress]
+    elif(recieverHandle in registered):
+        receiverAddress = registered[recieverHandle]
+        senderHandle = registered[senderAddress]
 
         message = emojify(message)
 
@@ -45,33 +45,33 @@ def unicast(serverSocket, handleDict, senderAddress, recieverHandle, message):
 
     return senderReply
 
-def broadcast(serverSocket, handleDict, setOfConnections, senderAddress, message):
-    if(senderAddress not in handleDict):
+def broadcast(serverSocket, registered, setOfConnections, senderAddress, message):
+    if(senderAddress not in registered):
         broadcastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
     
     else:
-        message = handleDict[senderAddress] + ": " + emojify(message)
+        message = registered[senderAddress] + ": " + emojify(message)
         broadcastMessage = toJsonString(["all", message]).encode()
 
         for address in setOfConnections:
-            if(address in handleDict and address != senderAddress): #change this if broadcast works for connected but not registered
+            if(address in registered and address != senderAddress): #change this if broadcast works for connected but not registered
                 serverSocket.sendto(broadcastMessage, address)
 
     return broadcastMessage
 
-def disconnect(setOfConnections, handleDict, senderAddress):
-    if(senderAddress in handleDict):
-        senderHandle = handleDict[senderAddress]
-        handleDict.pop(senderAddress)
-        handleDict.pop(senderHandle)
+def disconnect(setOfConnections, registered, senderAddress):
+    if(senderAddress in registered):
+        senderHandle = registered[senderAddress]
+        registered.pop(senderAddress)
+        registered.pop(senderHandle)
         
     setOfConnections.remove(senderAddress)
     reply = toJsonString(["leave"]).encode()
     
     return reply
 
-def createGC(senderAddress, handleDict, groupChats, groupName):
-    if(senderAddress not in handleDict):
+def createGC(senderAddress, registered, groupChats, groupName):
+    if(senderAddress not in registered):
         reply =  toJsonString(["error", "Register before creating a group"]).encode()
 
     elif(groupName in groupChats):
@@ -79,22 +79,22 @@ def createGC(senderAddress, handleDict, groupChats, groupName):
 
     else:
         groupChats[groupName] = set()
-        groupChats[groupName].add(handleDict[senderAddress])
+        groupChats[groupName].add(registered[senderAddress])
         reply = toJsonString(["createGC", groupName]).encode()
             
     return reply 
 
-def addGC(serverSocket, handleDict, groupChats, senderAddress, groupName, inviteHandle):
-    if(senderAddress not in handleDict):
+def addGC(serverSocket, registered, groupChats, senderAddress, groupName, inviteHandle):
+    if(senderAddress not in registered):
         reply =  toJsonString(["error", "Register before inviting"]).encode()
 
     elif(groupName not in groupChats):
         reply =  toJsonString(["error", "Group chat does not exist"]).encode()
 
-    elif(handleDict[senderAddress] in groupChats[groupName]):
+    elif(registered[senderAddress] in groupChats[groupName]):
         reply =  toJsonString(["error", "You are not part of this groupchat"]).encode()
 
-    elif(inviteHandle not in handleDict):
+    elif(inviteHandle not in registered):
         reply =  toJsonString(["error", "User handle does not exist"]).encode()
 
     elif(inviteHandle in groupChats[groupName]):
@@ -104,49 +104,49 @@ def addGC(serverSocket, handleDict, groupChats, senderAddress, groupName, invite
         groupChats[groupName].add(inviteHandle)
         reply = toJsonString(["addGC", groupName, inviteHandle]).encode()
         for handle in groupChats[groupName]:
-            if(handleDict[handle] != senderAddress):
-                serverSocket.sendto(reply, handleDict[handle])
+            if(registered[handle] != senderAddress):
+                serverSocket.sendto(reply, registered[handle])
             
     return reply 
 
-def leaveGC(serverSocket, handleDict, groupChats, senderAddress, groupName):
-    if(senderAddress not in handleDict):
+def leaveGC(serverSocket, registered, groupChats, senderAddress, groupName):
+    if(senderAddress not in registered):
         reply =  toJsonString(["error", "Register before leaving a group"]).encode()
     elif(groupName not in groupChats):
         reply =  toJsonString(["error", "Group chat does not exist"]).encode()
 
-    elif(handleDict[senderAddress] not in groupChats[groupName]):
+    elif(registered[senderAddress] not in groupChats[groupName]):
         reply =  toJsonString(["error", "You are not part of this group"]).encode()
         
     else:
-        groupChats[groupName].remove(handleDict[senderAddress])
-        reply = toJsonString(["leaveGC", groupName, handleDict[senderAddress]]).encode()
+        groupChats[groupName].remove(registered[senderAddress])
+        reply = toJsonString(["leaveGC", groupName, registered[senderAddress]]).encode()
 
         if(len(groupChats[groupName]) == 0):
             groupChats.pop(groupName)
         else:
             for handle in groupChats[groupName]:
-                if(handleDict[handle] is not senderAddress):
-                    serverSocket.sendto(reply, handleDict[handle])  
+                if(registered[handle] is not senderAddress):
+                    serverSocket.sendto(reply, registered[handle])  
 
     return reply 
 
-def msgGC(serverSocket, handleDict, groupChats, senderAddress, groupName, message):
-    if(senderAddress not in handleDict):
+def msgGC(serverSocket, registered, groupChats, senderAddress, groupName, message):
+    if(senderAddress not in registered):
         multicastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
     
     elif(groupName not in groupChats):
         multicastMessage =  toJsonString(["error", "Group chat does not exist"]).encode()
 
-    elif(handleDict[senderAddress] not in groupChats[groupName]):
+    elif(registered[senderAddress] not in groupChats[groupName]):
         multicastMessage =  toJsonString(["error", "You are not part of this group"]).encode()
 
     else:
         message = emojify(message)
-        multicastMessage = toJsonString(["msgGC", groupName, " " + handleDict[senderAddress] + "] " + message]).encode()
+        multicastMessage = toJsonString(["msgGC", groupName, " " + registered[senderAddress] + "] " + message]).encode()
 
         for handle in groupChats[groupName]:
-            if(handleDict[handle] != senderAddress): 
-                serverSocket.sendto(multicastMessage, handleDict[handle])
+            if(registered[handle] != senderAddress): 
+                serverSocket.sendto(multicastMessage, registered[handle])
 
     return multicastMessage

@@ -7,7 +7,7 @@ def main():
     serverIP = socket.gethostname()
     serverPort = 12345
     setOfConnections = set()
-    handleDict = {}
+    registered = {}
     groupChats = {}
 
     #creates datagram socket
@@ -38,28 +38,28 @@ def main():
                 serverReply = toJsonString(["error",  "Already connected to a server"]).encode()
 
             elif(messageObj["command"] == "/leave"):
-                serverReply = disconnect(setOfConnections, handleDict, senderAddress)
+                serverReply = disconnect(setOfConnections, registered, senderAddress)
 
             elif(messageObj["command"] == "/register"):
-                serverReply = registerHandle(handleDict, senderAddress, messageObj["handle"])
+                serverReply = registerHandle(registered, senderAddress, messageObj["handle"])
             
             elif(messageObj["command"] == "/msg"):
-                serverReply = unicast(serverSocket, handleDict, senderAddress, messageObj["handle"], messageObj["message"])
+                serverReply = unicast(serverSocket, registered, senderAddress, messageObj["handle"], messageObj["message"])
             
             elif(messageObj["command"] == "/all"):
-                serverReply = broadcast(serverSocket, handleDict, setOfConnections, senderAddress, messageObj["message"])
+                serverReply = broadcast(serverSocket, registered, setOfConnections, senderAddress, messageObj["message"])
 
             elif(messageObj["command"] == "/createGC"):
-                serverReply = createGC(senderAddress, handleDict, groupChats, messageObj["groupName"])
+                serverReply = createGC(senderAddress, registered, groupChats, messageObj["groupName"])
 
             elif(messageObj["command"] == "/addGC"):
-                serverReply = addGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
+                serverReply = addGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
 
             elif(messageObj["command"] == "/leaveGC"):
-                serverReply = leaveGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"])
+                serverReply = leaveGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"])
 
             elif(messageObj["command"] == "/msgGC"):
-                serverReply = msgGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["message"])
+                serverReply = msgGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"], messageObj["message"])
 
             elif(messageObj["command"] == "error"):
                 serverReply = toJsonString(["error", messageObj["message"]]).encode()
