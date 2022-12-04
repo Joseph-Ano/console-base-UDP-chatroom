@@ -8,6 +8,7 @@ def main():
     serverPort = 12345
     setOfConnections = set()
     handleDict = {}
+    groupChats = {}
 
     #creates datagram socket
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -47,7 +48,19 @@ def main():
             
             elif(messageObj["command"] == "/all"):
                 serverReply = broadcast(serverSocket, handleDict, setOfConnections, senderAddress, messageObj["message"])
-            
+
+            elif(messageObj["command"] == "/createGC"):
+                serverReply = createGC(senderAddress, handleDict, groupChats, messageObj["groupName"])
+
+            elif(messageObj["command"] == "/inviteGC"):
+                serverReply = inviteGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
+
+            elif(messageObj["command"] == "/leaveGC"):
+                serverReply = leaveGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"])
+
+            elif(messageObj["command"] == "/msgGC"):
+                serverReply = msgGC(serverSocket, handleDict, groupChats, senderAddress, messageObj["groupName"], messageObj["message"])
+
             elif(messageObj["command"] == "error"):
                 serverReply = toJsonString(["error", messageObj["message"]]).encode()
 

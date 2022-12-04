@@ -30,6 +30,18 @@ def receiveThread(connection):
             elif(replyObj["command"] == "all"):
                 print(replyObj["message"])
 
+            elif(replyObj["command"] == "createGC"):
+                print("Group chat: " + replyObj["groupName"] + " successfully created")
+
+            elif(replyObj["command"] == "inviteGC"):
+                print("[" + replyObj["groupName"] + "] " + replyObj["inviteHandle"]  + " has been added to the group.")
+
+            elif(replyObj["command"] == "leaveGC"):
+                print("[" + replyObj["groupName"] + "] " + replyObj["userHandle"]  + " has left the group.")
+
+            elif(replyObj["command"] == "msgGC"):
+                print("[" + replyObj["groupName"] + replyObj["message"])
+
             elif(replyObj["command"] == "leave"):
                 print("Connection closed. Thank you!")
 

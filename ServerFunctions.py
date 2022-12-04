@@ -69,3 +69,84 @@ def disconnect(setOfConnections, handleDict, senderAddress):
     reply = toJsonString(["leave"]).encode()
     
     return reply
+
+def createGC(senderAddress, handleDict, groupChats, groupName):
+    if(senderAddress not in handleDict):
+        reply =  toJsonString(["error", "Register before creating a group"]).encode()
+
+    elif(groupName in groupChats):
+        reply =  toJsonString(["error", "Group already exists"]).encode()
+
+    else:
+        groupChats[groupName] = set()
+        groupChats[groupName].add(handleDict[senderAddress])
+        reply = toJsonString(["createGC", groupName]).encode()
+            
+    return reply 
+
+def inviteGC(serverSocket, handleDict, groupChats, senderAddress, groupName, inviteHandle):
+    if(senderAddress not in handleDict):
+        reply =  toJsonString(["error", "Register before inviting"]).encode()
+
+    elif(groupName not in groupChats):
+        reply =  toJsonString(["error", "Group chat does not exist"]).encode()
+
+    elif(handleDict[senderAddress] in groupChats[groupName]):
+        reply =  toJsonString(["error", "You are not part of this groupchat"]).encode()
+
+    elif(inviteHandle not in handleDict):
+        reply =  toJsonString(["error", "User handle does not exist"]).encode()
+
+    elif(inviteHandle in groupChats[groupName]):
+        reply =  toJsonString(["error", "User handle already in group chat"]).encode()
+
+    else:
+        groupChats[groupName].add(inviteHandle)
+        reply = toJsonString(["invite", groupName, inviteHandle]).encode()
+        for handle in groupChats[groupName]:
+            if(handleDict[handle] != senderAddress):
+                serverSocket.sendto(reply, handleDict[handle])
+            
+    return reply 
+
+def leaveGC(serverSocket, handleDict, groupChats, senderAddress, groupName):
+    if(senderAddress not in handleDict):
+        reply =  toJsonString(["error", "Register before leaving a group"]).encode()
+    elif(groupName not in groupChats):
+        reply =  toJsonString(["error", "Group chat does not exist"]).encode()
+
+    elif(handleDict[senderAddress] not in groupChats[groupName]):
+        reply =  toJsonString(["error", "You are not part of this group"]).encode()
+        
+    else:
+        groupChats[groupName].remove(handleDict[senderAddress])
+        reply = toJsonString(["leaveGC", groupName, handleDict[senderAddress]]).encode()
+
+        if(len(groupChats[groupName]) == 0):
+            groupChats.pop(groupName)
+        else:
+            for handle in groupChats[groupName]:
+                if(handleDict[handle] is not senderAddress):
+                    serverSocket.sendto(reply, handleDict[handle])  
+
+    return reply 
+
+def msgGC(serverSocket, handleDict, groupChats, senderAddress, groupName, message):
+    if(senderAddress not in handleDict):
+        multicastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
+    
+    elif(groupName not in groupChats):
+        multicastMessage =  toJsonString(["error", "Group chat does not exist"]).encode()
+
+    elif(handleDict[senderAddress] not in groupChats[groupName]):
+        multicastMessage =  toJsonString(["error", "You are not part of this group"]).encode()
+
+    else:
+        message = emojify(message)
+        multicastMessage = toJsonString(["msgGC", groupName, " " + handleDict[senderAddress] + "] " + message]).encode()
+
+        for handle in groupChats[groupName]:
+            if(handleDict[handle] != senderAddress): 
+                serverSocket.sendto(multicastMessage, handleDict[handle])
+
+    return multicastMessage
