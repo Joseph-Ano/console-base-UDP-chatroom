@@ -49,6 +49,7 @@ def receiveThread(connection):
 
             elif(replyObj["command"] == "leave"):
                 print("Connection closed. Thank you!")
+                break
 
             elif(replyObj["command"] == "error"):
                 print(replyObj["command"] + ": " + replyObj["message"])

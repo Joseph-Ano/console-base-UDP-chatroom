@@ -2,7 +2,6 @@ import socket
 import threading
 from ClientParser import *
 from ClientFunctions import *
-import time
 
 BUFFER_SIZE = 1024
 
@@ -11,26 +10,15 @@ def main():
     serverPort = None
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     thread = threading.Thread(target=receiveThread, args=(clientSocket,))
-    thread.daemon = True
     thread.start()
 
     while(True):
         inputString = input("Enter command: ")
         inputList = inputString.strip().split(" ")
         parameters = len(inputList)
-        
-        if(inputString == "!q"):
-            if(serverIP is not None and serverPort is not None):
-                messageString = toJsonString(["/leave"], 1)
-                messageBytes = messageString.encode()
-                clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
-
-            time.sleep(2)
-            print("Exiting Client")
-            exit()
 
         #help menu
-        elif(inputList[0] == "/?"):
+        if(inputList[0] == "/?"):
             if(parameters == 1):
                 helpMenu()
             else:
@@ -57,6 +45,7 @@ def main():
 
             if(inputList[0] == "/leave"):
                 serverIP, serverPort = None, None
+                exit()
 main()
 
 
