@@ -60,9 +60,15 @@ def connectToServer(clientSocket, serverIP, serverPort):
     try:
         msgToSend = str.encode("Requesting connection...")
 
-        clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
+        try:
+            int(serverPort)
+            clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
 
-        return serverIP, serverPort
+            return serverIP, serverPort
+
+        except ValueError:
+            print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
+            return None, None
 
     except socket.gaierror:
         print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
