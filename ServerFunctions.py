@@ -1,5 +1,3 @@
-from ServerParser import *
- 
 def emojify(message):
     emojies = {
         ":happy:": "😊",
@@ -12,20 +10,20 @@ def emojify(message):
 def registerHandle(registered, senderAddress, userHandle):
     if(userHandle not in registered):
         if(senderAddress in registered): 
-            reply =  toJsonString(["error", "Registration failed. You are already registered"]).encode()
+            reply =  "Error: Registration failed. You are already registered"
 
         else:
             registered[senderAddress] = userHandle
             registered[userHandle] = senderAddress
-            reply = toJsonString(["register", userHandle]).encode()
+            reply = "Welcome " + str(userHandle)
     else:
-        reply =  toJsonString(["error", "Registration failed. Handle: " + userHandle + " already exists"]).encode()
+        reply =  "Error: Error: Registration failed. Handle or alias already exists."
             
-    return reply 
+    return reply.encode()
 
 def unicast(serverSocket, registered, senderAddress, recieverHandle, message):
     if(senderAddress not in registered):
-        senderReply = toJsonString(["error", "Register first before sending messages."]).encode()
+        senderReply = "Error: Register first before sending messages.".encode()
 
     elif(recieverHandle in registered):
         receiverAddress = registered[recieverHandle]
@@ -33,29 +31,29 @@ def unicast(serverSocket, registered, senderAddress, recieverHandle, message):
 
         message = emojify(message)
 
-        receiverMsg = "[FROM " + senderHandle + "] " + message
-        senderReply = "[TO " + recieverHandle + "] " + message
+        receiverMsg = "[FROM " + str(senderHandle) + "] " + message
+        senderReply = "[TO " + str(recieverHandle) + "] " + message
     
-        receiverMsg = toJsonString(["msg", recieverHandle, receiverMsg]).encode()
-        senderReply = toJsonString(["msg", senderHandle, senderReply]).encode()
+        receiverMsg = receiverMsg.encode()
+        senderReply = senderReply.encode()
 
         serverSocket.sendto(receiverMsg, receiverAddress)
 
     else:
-        senderReply = toJsonString(["error", "Handle or alias not found."]).encode()
+        senderReply = "Error: Handle or alias not found.".encode()
 
     return senderReply
 
 def broadcast(serverSocket, registered, setOfConnections, senderAddress, message):
     if(senderAddress not in registered):
-        broadcastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
+        broadcastMessage = "Error: Register first before sending messages.".encode()
     
     else:
-        message = registered[senderAddress] + ": " + emojify(message)
-        broadcastMessage = toJsonString(["all", message]).encode()
+        message = emojify(message)
+        broadcastMessage = (str(registered[senderAddress]) + ": " + message).encode()
 
         for address in setOfConnections:
-            if(address in registered and address != senderAddress): #change this if broadcast works for connected but not registered
+            if(address in registered and address != senderAddress):
                 serverSocket.sendto(broadcastMessage, address)
 
     return broadcastMessage
@@ -67,43 +65,43 @@ def disconnect(setOfConnections, registered, senderAddress):
         registered.pop(senderHandle)
         
     setOfConnections.remove(senderAddress)
-    reply = toJsonString(["leave"]).encode()
+    reply = "Connection closed. Thank you!"
     
-    return reply
+    return reply.encode()
 
 def createGC(senderAddress, registered, groupChats, groupName):
     if(senderAddress not in registered):
-        reply =  toJsonString(["error", "Register before creating a group"]).encode()
+        reply =  "Error: Register before creating a group"
 
     elif(groupName in groupChats):
-        reply =  toJsonString(["error", "Group already exists"]).encode()
+        reply =  "Error: Group already exists"
 
     else:
         groupChats[groupName] = set()
         groupChats[groupName].add(registered[senderAddress])
-        reply = toJsonString(["createGC", groupName]).encode()
+        reply = "Group Chat " + groupName + " has been created"
             
-    return reply 
+    return reply .encode()
 
 def addGC(serverSocket, registered, groupChats, senderAddress, groupName, inviteHandle):
     if(senderAddress not in registered):
-        reply =  toJsonString(["error", "Register before inviting"]).encode()
+        reply = "Error: Register before inviting".encode()
 
     elif(groupName not in groupChats):
-        reply =  toJsonString(["error", "Group chat does not exist"]).encode()
+        reply = "Error: Group chat does not exist".encode()
 
     elif(registered[senderAddress] in groupChats[groupName]):
-        reply =  toJsonString(["error", "You are not part of this groupchat"]).encode()
+        reply = "Error: You are not part of this groupchat".encode()
 
     elif(inviteHandle not in registered):
-        reply =  toJsonString(["error", "User handle does not exist"]).encode()
+        reply = "Error: Handle or alias not found".encode()
 
     elif(inviteHandle in groupChats[groupName]):
-        reply =  toJsonString(["error", "User handle already in group chat"]).encode()
+        reply = "Error: User handle already in group chat".encode()
 
     else:
         groupChats[groupName].add(inviteHandle)
-        reply = toJsonString(["addGC", groupName, inviteHandle]).encode()
+        reply = (str(inviteHandle) + " has been added to " + str(groupName)).encode()
         for handle in groupChats[groupName]:
             if(registered[handle] != senderAddress):
                 serverSocket.sendto(reply, registered[handle])
@@ -112,16 +110,16 @@ def addGC(serverSocket, registered, groupChats, senderAddress, groupName, invite
 
 def leaveGC(serverSocket, registered, groupChats, senderAddress, groupName):
     if(senderAddress not in registered):
-        reply =  toJsonString(["error", "Register before leaving a group"]).encode()
+        reply =  "Error: Register before leaving a group".encode()
     elif(groupName not in groupChats):
-        reply =  toJsonString(["error", "Group chat does not exist"]).encode()
+        reply =  "Error: Group chat does not exist".encode()
 
     elif(registered[senderAddress] not in groupChats[groupName]):
-        reply =  toJsonString(["error", "You are not part of this group"]).encode()
+        reply =  "Error: You are not part of this group".encode()
         
     else:
         groupChats[groupName].remove(registered[senderAddress])
-        reply = toJsonString(["leaveGC", groupName, registered[senderAddress]]).encode()
+        reply = (str(registered[senderAddress]) + " has left the group chat " + str(groupName)).encode()
 
         if(len(groupChats[groupName]) == 0):
             groupChats.pop(groupName)
@@ -134,17 +132,17 @@ def leaveGC(serverSocket, registered, groupChats, senderAddress, groupName):
 
 def msgGC(serverSocket, registered, groupChats, senderAddress, groupName, message):
     if(senderAddress not in registered):
-        multicastMessage = toJsonString(["error", "Register first before sending messages."]).encode()
+        multicastMessage = "Error: Register first before sending messages.".encode()
     
     elif(groupName not in groupChats):
-        multicastMessage =  toJsonString(["error", "Group chat does not exist"]).encode()
+        multicastMessage =  "Error: Group chat does not exist".encode()
 
     elif(registered[senderAddress] not in groupChats[groupName]):
-        multicastMessage =  toJsonString(["error", "You are not part of this group"]).encode()
+        multicastMessage =  "Error: You are not part of this group".encode()
 
     else:
         message = emojify(message)
-        multicastMessage = toJsonString(["msgGC", groupName, " " + registered[senderAddress] + "] " + message]).encode()
+        multicastMessage = ("["+str(groupName)+" "+str(registered[senderAddress])+"] "+message).encode()
 
         for handle in groupChats[groupName]:
             if(registered[handle] != senderAddress): 

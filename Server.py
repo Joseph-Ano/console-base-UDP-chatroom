@@ -1,5 +1,6 @@
 import socket
 from ServerFunctions import *
+import json
 
 BUFFER_SIZE = 1024
 
@@ -29,13 +30,13 @@ def main():
             setOfConnections.add(senderAddress)
             print("Connection Established with IP address: " + senderIP + " and port: " + str(senderPort))
 
-            serverReply = toJsonString(["join"]).encode()
+            serverReply = "Connection to the Message Board Server is successful!".encode()
         
         else:
             messageObj = json.loads(messageString) 
 
             if(messageObj["command"] == "/join"):
-                serverReply = toJsonString(["error",  "Already connected to a server"]).encode()
+                serverReply = "Error: Already connected to a server".encode()
 
             elif(messageObj["command"] == "/leave"):
                 serverReply = disconnect(setOfConnections, registered, senderAddress)
@@ -62,10 +63,10 @@ def main():
                 serverReply = msgGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"], messageObj["message"])
 
             elif(messageObj["command"] == "error"):
-                serverReply = toJsonString(["error", messageObj["message"]]).encode()
+                serverReply =  str(messageObj["message"]).encode()
 
             else:
-                serverReply = toJsonString(["error", "Command not recognized"]).encode()
+                serverReply = "Error: Command not recognized".encode()
 
         serverSocket.sendto(serverReply, senderAddress)
 
