@@ -2,9 +2,15 @@ import json
 
 def toJsonString(inputList, parameters):
     if(inputList[0] == "/join"):
-        msgDict = {
-            "command": inputList[0],
-        }
+        if(parameters == 3):
+            msgDict = {
+                "command": inputList[0]
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "Error: Command parameters do not match or is not allowed."
+            }
         
     elif(inputList[0] == "/leave"):
         if(parameters == 1):
