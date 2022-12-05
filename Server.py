@@ -4,7 +4,7 @@ from ServerFunctions import *
 BUFFER_SIZE = 1024
 
 def main():
-    serverIP = socket.gethostname()
+    serverIP = "127.0.0.1"
     serverPort = 12345
     setOfConnections = set()
     registered = {}

@@ -24,10 +24,15 @@ def toJsonString(inputList, parameters):
                 "command": inputList[0],
                 "handle": inputList[1]
             }
-        else:
+        elif(parameters > 2):
             msgDict = {
                 "command": "error",
                 "message": "Error: handle must not contain spaces"
+            }
+        else:
+            msgDict = {
+                "command": "error",
+                "message": "Error: Command parameters do not match or is not allowed."
             }
 
     elif(inputList[0] == "/msg"):

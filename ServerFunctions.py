@@ -11,12 +11,13 @@ def emojify(message):
 
 def registerHandle(registered, senderAddress, userHandle):
     if(userHandle not in registered):
-        if(senderAddress in registered): #change this if not allowed to change handle once set
-            registered.pop(registered[senderAddress])
+        if(senderAddress in registered): 
+            reply =  toJsonString(["error", "Registration failed. You are already registered"]).encode()
 
-        registered[senderAddress] = userHandle
-        registered[userHandle] = senderAddress
-        reply = toJsonString(["register", userHandle]).encode()
+        else:
+            registered[senderAddress] = userHandle
+            registered[userHandle] = senderAddress
+            reply = toJsonString(["register", userHandle]).encode()
     else:
         reply =  toJsonString(["error", "Registration failed. Handle: " + userHandle + " already exists"]).encode()
             
