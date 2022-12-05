@@ -90,7 +90,7 @@ def addGC(serverSocket, registered, groupChats, senderAddress, groupName, invite
     elif(groupName not in groupChats):
         reply = "Error: Group chat does not exist".encode()
 
-    elif(registered[senderAddress] in groupChats[groupName]):
+    elif(registered[senderAddress] not in groupChats[groupName]):
         reply = "Error: You are not part of this groupchat".encode()
 
     elif(inviteHandle not in registered):

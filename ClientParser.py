@@ -77,7 +77,7 @@ def toJsonString(inputList, parameters):
                 "command": "error",
                 "message": "Error: Groupname must not include spaces."
             }
-    elif(inputList[0] == "/adGC"):
+    elif(inputList[0] == "/addGC"):
         if(parameters == 3):
             msgDict = {
                 "command": inputList[0],
