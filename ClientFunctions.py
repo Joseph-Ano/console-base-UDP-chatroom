@@ -1,5 +1,4 @@
 import socket
-import json
 
 BUFFER_SIZE = 1024
 
@@ -15,7 +14,7 @@ def helpMenu():
     print("Adding users to group chat: /addGC <group chat name> <user handle to add>")
     print("Leaving a group chat: /leaveGC <group chat name>")
     print("Messaging a group chat: /msgGC <group chat name> <message>")
-    print("\n\nEmoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
+    print("\nEmoji commands: \n ':happy:': '😊',\n':sad:': '😢',\n':laugh:':'😂',\n':angry:': '😡'")
 
 def receiveThread(connection):
     while(True):

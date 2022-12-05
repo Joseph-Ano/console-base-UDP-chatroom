@@ -10,14 +10,14 @@ def emojify(message):
 def registerHandle(registered, senderAddress, userHandle):
     if(userHandle not in registered):
         if(senderAddress in registered): 
-            reply =  "Error: Registration failed. You are already registered"
+            reply = "Error: Registration failed. You are already registered"
 
         else:
             registered[senderAddress] = userHandle
             registered[userHandle] = senderAddress
             reply = "Welcome " + str(userHandle)
     else:
-        reply =  "Error: Error: Registration failed. Handle or alias already exists."
+        reply = "Error: Error: Registration failed. Handle or alias already exists."
             
     return reply.encode()
 
@@ -71,17 +71,17 @@ def disconnect(setOfConnections, registered, senderAddress):
 
 def createGC(senderAddress, registered, groupChats, groupName):
     if(senderAddress not in registered):
-        reply =  "Error: Register before creating a group"
+        reply = "Error: Register before creating a group"
 
     elif(groupName in groupChats):
-        reply =  "Error: Group already exists"
+        reply = "Error: Group already exists"
 
     else:
         groupChats[groupName] = set()
         groupChats[groupName].add(registered[senderAddress])
         reply = "Group Chat " + groupName + " has been created"
             
-    return reply .encode()
+    return reply.encode()
 
 def addGC(serverSocket, registered, groupChats, senderAddress, groupName, inviteHandle):
     if(senderAddress not in registered):
@@ -110,12 +110,12 @@ def addGC(serverSocket, registered, groupChats, senderAddress, groupName, invite
 
 def leaveGC(serverSocket, registered, groupChats, senderAddress, groupName):
     if(senderAddress not in registered):
-        reply =  "Error: Register before leaving a group".encode()
+        reply = "Error: Register before leaving a group".encode()
     elif(groupName not in groupChats):
-        reply =  "Error: Group chat does not exist".encode()
+        reply = "Error: Group chat does not exist".encode()
 
     elif(registered[senderAddress] not in groupChats[groupName]):
-        reply =  "Error: You are not part of this group".encode()
+        reply = "Error: You are not part of this group".encode()
         
     else:
         groupChats[groupName].remove(registered[senderAddress])
@@ -135,10 +135,10 @@ def msgGC(serverSocket, registered, groupChats, senderAddress, groupName, messag
         multicastMessage = "Error: Register first before sending messages.".encode()
     
     elif(groupName not in groupChats):
-        multicastMessage =  "Error: Group chat does not exist".encode()
+        multicastMessage = "Error: Group chat does not exist".encode()
 
     elif(registered[senderAddress] not in groupChats[groupName]):
-        multicastMessage =  "Error: You are not part of this group".encode()
+        multicastMessage = "Error: You are not part of this group".encode()
 
     else:
         message = emojify(message)
