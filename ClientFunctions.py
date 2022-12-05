@@ -39,6 +39,6 @@ def connectToServer(clientSocket, serverIP, serverPort):
             print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
             return None, None
 
-    except socket.gaierror:
+    except:
         print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
         return None, None
