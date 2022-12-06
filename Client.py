@@ -38,7 +38,7 @@ def main():
             if(parameters == 1):
                 helpMenu()
             else:
-                print("Error: wrong parameters")
+                print("Error: Command parameters do not match or is not allowed.")
 
         #not connected to a server
         elif(connectedServer.ip == None and connectedServer.port == None):
@@ -46,7 +46,7 @@ def main():
                 if(parameters == 3):
                     connectedServer.ip, connectedServer.port = connectToServer(clientSocket, inputList[1], inputList[2])
                 else:
-                    print("input is incorrect")
+                    print("Error: Command parameters do not match or is not allowed.")
             elif(inputList[0] == "/leave"):
                 print("Error: Disconnection failed. Please connect to the server first.")
             else:

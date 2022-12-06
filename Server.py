@@ -35,31 +35,31 @@ def main():
         else:
             messageObj = json.loads(messageString) 
 
-            if(messageObj["command"] == "/join"):
+            if(messageObj["command"] == "join"):
                 serverReply = "Error: Already connected to a server".encode()
 
-            elif(messageObj["command"] == "/leave"):
+            elif(messageObj["command"] == "leave"):
                 serverReply = disconnect(setOfConnections, registered, senderAddress)
 
-            elif(messageObj["command"] == "/register"):
+            elif(messageObj["command"] == "register"):
                 serverReply = registerHandle(registered, senderAddress, messageObj["handle"])
             
-            elif(messageObj["command"] == "/msg"):
+            elif(messageObj["command"] == "msg"):
                 serverReply = unicast(serverSocket, registered, senderAddress, messageObj["handle"], messageObj["message"])
             
-            elif(messageObj["command"] == "/all"):
+            elif(messageObj["command"] == "all"):
                 serverReply = broadcast(serverSocket, registered, setOfConnections, senderAddress, messageObj["message"])
 
-            elif(messageObj["command"] == "/createGC"):
+            elif(messageObj["command"] == "createGC"):
                 serverReply = createGC(senderAddress, registered, groupChats, messageObj["groupName"])
 
-            elif(messageObj["command"] == "/addGC"):
+            elif(messageObj["command"] == "addGC"):
                 serverReply = addGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"], messageObj["inviteHandle"])
 
-            elif(messageObj["command"] == "/leaveGC"):
+            elif(messageObj["command"] == "leaveGC"):
                 serverReply = leaveGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"])
 
-            elif(messageObj["command"] == "/msgGC"):
+            elif(messageObj["command"] == "msgGC"):
                 serverReply = msgGC(serverSocket, registered, groupChats, senderAddress, messageObj["groupName"], messageObj["message"])
 
             elif(messageObj["command"] == "error"):

@@ -17,7 +17,7 @@ def registerHandle(registered, senderAddress, userHandle):
             registered[userHandle] = senderAddress
             reply = "Welcome " + str(userHandle)
     else:
-        reply = "Error: Error: Registration failed. Handle or alias already exists."
+        reply = "Error: Registration failed. Handle or alias already exists."
             
     return reply.encode()
 

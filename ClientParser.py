@@ -4,7 +4,7 @@ def toJsonString(inputList, parameters):
     if(inputList[0] == "/join"):
         if(parameters == 3):
             msgDict = {
-                "command": inputList[0]
+                "command": inputList[0][1:]
             }
         else:
             msgDict = {
@@ -15,7 +15,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/leave"):
         if(parameters == 1):
             msgDict = {
-                "command": inputList[0]
+                "command": inputList[0][1:]
             }
         else:
             msgDict = {
@@ -27,7 +27,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/register"):
         if(parameters == 2):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "handle": inputList[1]
             }
         elif(parameters > 2):
@@ -44,7 +44,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/msg"):
         if(parameters >= 3):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "handle": inputList[1],
                 "message": inputList[2:]
             }
@@ -57,7 +57,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/all"):
         if(parameters >=2):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "message": inputList[1:]
             }
         else:
@@ -69,8 +69,13 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/createGC"):
         if(parameters == 2):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "groupName": inputList[1]
+            }
+        elif(parameters < 2):
+            msgDict = {
+                "command": "error",
+                "message": "Error: Command parameters do not match or is not allowed."
             }
         else:
             msgDict = {
@@ -80,7 +85,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/addGC"):
         if(parameters == 3):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "groupName": inputList[1],
                 "inviteHandle": inputList[2]
             }
@@ -93,7 +98,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/leaveGC"):
         if(parameters == 2):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "groupName": inputList[1],
             }
         else:
@@ -105,7 +110,7 @@ def toJsonString(inputList, parameters):
     elif(inputList[0] == "/msgGC"):
         if(parameters >= 3):
             msgDict = {
-                "command": inputList[0],
+                "command": inputList[0][1:],
                 "groupName": inputList[1],
                 "message": inputList[2:]
             }
