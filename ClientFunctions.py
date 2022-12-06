@@ -48,11 +48,20 @@ def helpMenu():
 | /leaveGC <group chat name>   | Leave a group chat.                    |
 +------------------------------+----------------------------------------+""")
 
-def receiveThread(connection):
+def receiveThread(connection, server):
     while(True):
         try:
-            replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
-            print(replyString)
+            
+            try:
+                replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
+                print(replyString)
+                connection.settimeout(None)
+
+            except socket.timeout:
+                print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
+                server.ip = None
+                server.port = None
+                connection.settimeout(None)
 
         except:
             pass
@@ -64,7 +73,7 @@ def connectToServer(clientSocket, serverIP, serverPort):
         try:
             int(serverPort)
             clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
-
+            clientSocket.settimeout(1)
             return serverIP, serverPort
 
         except ValueError:

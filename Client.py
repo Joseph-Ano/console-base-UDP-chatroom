@@ -6,11 +6,15 @@ from ClientFunctions import *
 
 BUFFER_SIZE = 1024
 
+class ConnectedServer:
+  def __init__(self, ip, port):
+    self.ip = ip
+    self.port = port
+
 def main():
-    serverIP = None
-    serverPort = None
+    connectedServer = ConnectedServer(None, None)
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    thread = threading.Thread(target=receiveThread, args=(clientSocket,))
+    thread = threading.Thread(target=receiveThread, args=(clientSocket, connectedServer))
     thread.daemon = True
     thread.start()
 
@@ -20,10 +24,10 @@ def main():
         parameters = len(inputList)
 
         if(inputString == "!q"):
-            if(serverIP is not None and serverPort is not None):
+            if(connectedServer.ip is not None and connectedServer.port is not None):
                 messageString = toJsonString(["/leave"], 1)
                 messageBytes = messageString.encode()
-                clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
+                clientSocket.sendto(messageBytes, (connectedServer.ip, int(connectedServer.port)))
 
             time.sleep(2)
             print("Exiting Client")
@@ -37,10 +41,10 @@ def main():
                 print("Error: wrong parameters")
 
         #not connected to a server
-        elif(serverIP == None and serverPort == None):
+        elif(connectedServer.ip == None and connectedServer.port == None):
             if(inputList[0] == "/join"):
                 if(parameters == 3):
-                    serverIP, serverPort = connectToServer(clientSocket, inputList[1], inputList[2])
+                    connectedServer.ip, connectedServer.port = connectToServer(clientSocket, inputList[1], inputList[2])
                 else:
                     print("input is incorrect")
             elif(inputList[0] == "/leave"):
@@ -49,14 +53,14 @@ def main():
                 print("Error: Please connect to the server first.")
 
         #connected to server
-        elif(serverIP is not None and serverPort is not None):
+        elif(connectedServer.ip is not None and connectedServer.port is not None):
             messageString = toJsonString(inputList, parameters)
             messageBytes = messageString.encode()
 
-            clientSocket.sendto(messageBytes, (serverIP, int(serverPort)))
+            clientSocket.sendto(messageBytes, (connectedServer.ip, int(connectedServer.port)))
 
             if(inputList[0] == "/leave" and parameters == 1):
-                serverIP, serverPort = None, None
+                connectedServer.ip, connectedServer.port = None, None
 main()
 
 
