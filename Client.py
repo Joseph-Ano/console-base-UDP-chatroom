@@ -18,8 +18,10 @@ def main():
     thread.daemon = True
     thread.start()
 
+    print("Start entering your commands")
+
     while(True):
-        inputString = input("Enter command: ")
+        inputString = input()
         inputList = inputString.strip().split(" ")
         parameters = len(inputList)
 

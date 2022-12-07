@@ -30,7 +30,7 @@ def main():
             setOfConnections.add(senderAddress)
             print("Connection Established with IP address: " + senderIP + " and port: " + str(senderPort))
 
-            serverReply = "Connection to the Message Board Server is successful!".encode()
+            serverReply = "Server: Connection to the Message Board Server is successful!".encode()
         
         else:
             messageObj = json.loads(messageString) 

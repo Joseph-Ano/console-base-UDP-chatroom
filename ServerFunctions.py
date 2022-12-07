@@ -15,7 +15,7 @@ def registerHandle(registered, senderAddress, userHandle):
         else:
             registered[senderAddress] = userHandle
             registered[userHandle] = senderAddress
-            reply = "Welcome " + str(userHandle)
+            reply = "Server: Welcome " + str(userHandle)
     else:
         reply = "Error: Registration failed. Handle or alias already exists."
             
@@ -65,7 +65,7 @@ def disconnect(setOfConnections, registered, senderAddress):
         registered.pop(senderHandle)
         
     setOfConnections.remove(senderAddress)
-    reply = "Connection closed. Thank you!"
+    reply = "Server: Connection closed. Thank you!"
     
     return reply.encode()
 
@@ -79,7 +79,7 @@ def createGC(senderAddress, registered, groupChats, groupName):
     else:
         groupChats[groupName] = set()
         groupChats[groupName].add(registered[senderAddress])
-        reply = "Group Chat " + groupName + " has been created"
+        reply = "Server: Group Chat " + groupName + " has been created"
             
     return reply.encode()
 
@@ -101,7 +101,7 @@ def addGC(serverSocket, registered, groupChats, senderAddress, groupName, invite
 
     else:
         groupChats[groupName].add(inviteHandle)
-        reply = (str(inviteHandle) + " has been added to " + str(groupName)).encode()
+        reply = ("Server: " + str(inviteHandle) + " has been added to " + str(groupName)).encode()
         for handle in groupChats[groupName]:
             if(registered[handle] != senderAddress):
                 serverSocket.sendto(reply, registered[handle])
@@ -119,7 +119,7 @@ def leaveGC(serverSocket, registered, groupChats, senderAddress, groupName):
         
     else:
         groupChats[groupName].remove(registered[senderAddress])
-        reply = (str(registered[senderAddress]) + " has left the group chat " + str(groupName)).encode()
+        reply = ("Server: " + str(registered[senderAddress]) + " has left the group chat " + str(groupName)).encode()
 
         if(len(groupChats[groupName]) == 0):
             groupChats.pop(groupName)
