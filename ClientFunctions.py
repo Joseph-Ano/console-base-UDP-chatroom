@@ -71,8 +71,8 @@ def connectToServer(clientSocket, serverIP, serverPort):
         msgToSend = str.encode("Requesting connection...")
         
         if(serverIP != "127.0.0.1"):
-             print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
-             return None, None
+            print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
+            return None, None
 
         else:
             int(serverPort)
