@@ -51,7 +51,7 @@ def helpMenu():
 def receiveThread(connection, server):
     while(True):
         try:
-            
+
             try:
                 replyString = connection.recvfrom(BUFFER_SIZE)[0].decode()
                 print(replyString)
@@ -69,16 +69,16 @@ def receiveThread(connection, server):
 def connectToServer(clientSocket, serverIP, serverPort):
     try:
         msgToSend = str.encode("Requesting connection...")
+        
+        if(serverIP != "127.0.0.1"):
+             print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
+             return None, None
 
-        try:
+        else:
             int(serverPort)
             clientSocket.sendto(msgToSend, (serverIP, int(serverPort)))
             clientSocket.settimeout(1)
             return serverIP, serverPort
-
-        except ValueError:
-            print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
-            return None, None
 
     except:
         print("Error: Connection to the Message Board Server has failed! Please check IP Address and Port Number.")
